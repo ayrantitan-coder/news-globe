@@ -1,9 +1,25 @@
 import express from "express";
 import fetch from "node-fetch";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
+// ----------------------------------
+// FIX PATH (wichtig für Render)
+// ----------------------------------
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ----------------------------------
+// STATIC FRONTEND SERVING
+// ----------------------------------
+app.use(express.static(__dirname));
+
+// ----------------------------------
+// RSS PROXY
+// ----------------------------------
 app.get("/rss", async (req, res) => {
   const url = req.query.url;
 
@@ -20,6 +36,16 @@ app.get("/rss", async (req, res) => {
   }
 });
 
+// ----------------------------------
+// ROOT ROUTE (WICHTIG!)
+// ----------------------------------
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// ----------------------------------
+// START SERVER
+// ----------------------------------
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
