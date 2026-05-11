@@ -55,13 +55,17 @@ export async function loadNews() {
   const articleSources = {};
   const seenLinks = new Set();
 
+  // 🔥 AUTO SWITCH LOCAL vs RENDER
+  const PROXY_BASE =
+    location.hostname === "localhost"
+      ? "http://localhost:3000"
+      : "https://news-globe-ll1g.onrender.com";
+
   for (let feed of feeds) {
     try {
 
-      // ---------------------------------------------
-      // 🔥 PROXY CALL (DEIN NODE SERVER)
-      // ---------------------------------------------
-      const proxyUrl = `http://localhost:3000/rss?url=${encodeURIComponent(feed.url)}`;
+      const proxyUrl =
+        `${PROXY_BASE}/rss?url=${encodeURIComponent(feed.url)}`;
 
       const res = await fetch(proxyUrl);
       const xmlText = await res.text();
@@ -74,9 +78,6 @@ export async function loadNews() {
 
       articleSources[feed.url] = 0;
 
-      // ---------------------------------------------
-      // ITEMS LOOP
-      // ---------------------------------------------
       items.forEach(item => {
 
         const title = item.querySelector("title")?.textContent || "";
@@ -88,20 +89,17 @@ export async function loadNews() {
         seenLinks.add(link);
         articleSources[feed.url]++;
 
-        const text = (
-          title + " " + description + " " + link
-        ).toLowerCase();
+        const text = (title + " " + description + " " + link).toLowerCase();
 
         let assigned = false;
 
         // ---------------------------------------------
-        // 1. DEFAULT COUNTRY (WICHTIG: NYT USA FIX)
+        // DEFAULT COUNTRY (USA FIX etc.)
         // ---------------------------------------------
         if (feed.defaultCountry) {
 
-          if (!newsByCountry[feed.defaultCountry]) {
-            newsByCountry[feed.defaultCountry] = [];
-          }
+          newsByCountry[feed.defaultCountry] =
+            newsByCountry[feed.defaultCountry] || [];
 
           newsByCountry[feed.defaultCountry].push({
             title,
@@ -113,7 +111,7 @@ export async function loadNews() {
         }
 
         // ---------------------------------------------
-        // 2. COUNTRY KEYWORDS
+        // COUNTRY KEYWORDS
         // ---------------------------------------------
         if (!assigned) {
           for (let country of countries) {
@@ -127,9 +125,8 @@ export async function loadNews() {
 
             if (nameMatch || keywordMatch) {
 
-              if (!newsByCountry[country.name]) {
-                newsByCountry[country.name] = [];
-              }
+              newsByCountry[country.name] =
+                newsByCountry[country.name] || [];
 
               newsByCountry[country.name].push({
                 title,
@@ -137,7 +134,6 @@ export async function loadNews() {
                 source: new URL(feed.url).hostname
               });
 
-              assigned = true;
               break;
             }
           }
@@ -149,11 +145,7 @@ export async function loadNews() {
     }
   }
 
-  // ---------------------------------------------
-  // UI COUNTER
-  // ---------------------------------------------
   displayNewsCounter(articleSources);
-
   return newsByCountry;
 }
 
@@ -180,6 +172,8 @@ function displayNewsCounter(articleSources) {
     document.body.appendChild(el);
   }
 
-  const total = Object.values(articleSources).reduce((a, b) => a + b, 0);
+  const total = Object.values(articleSources)
+    .reduce((a, b) => a + b, 0);
+
   el.textContent = `News loaded: ${total}`;
 }
