@@ -6,9 +6,9 @@ body {
     overflow: hidden;
 }
 
-/* ---------------------------------
+/* =========================
    DESKTOP LAYOUT
----------------------------------- */
+========================= */
 
 #container {
     position: absolute;
@@ -18,7 +18,6 @@ body {
     height: 100%;
 }
 
-/* News Panel links (FIX: news-container!) */
 #news-container {
     position: absolute;
     left: 10px;
@@ -30,10 +29,9 @@ body {
     padding: 10px;
     border-radius: 8px;
     color: white;
-    font-family: sans-serif;
 }
 
-/* News Block */
+/* News Blocks */
 .news-block {
     margin-bottom: 15px;
 }
@@ -49,13 +47,10 @@ body {
     font-size: 14px;
 }
 
-/* ---------------------------------
-   UI ELEMENTS
----------------------------------- */
-
+/* Tooltip / Banner */
 #banner {
     position: absolute;
-    bottom: 10px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     padding: 8px 12px;
@@ -65,7 +60,6 @@ body {
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s;
-    z-index: 10;
 }
 
 #tooltip {
@@ -77,37 +71,36 @@ body {
     border-radius: 4px;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.2s;
-    z-index: 11;
 }
 
-/* ---------------------------------
-   📱 MOBILE RESPONSIVE
----------------------------------- */
+/* =========================
+   📱 MOBILE FIX
+========================= */
 
-@media only screen and (max-width: 768px) {
+@media (max-width: 768px) {
 
     body {
-        overflow: auto;
+        overflow-y: auto; /* WICHTIG: sonst wird unten abgeschnitten */
     }
 
     #container {
         position: relative;
         width: 100%;
-        height: 50vh;
+        height: 50vh; /* Globe oben */
     }
 
     #news-container {
         position: relative;
         width: 100%;
         height: auto;
-        max-height: 50vh;
+        max-height: none;
+        overflow-y: visible;
         margin-top: 10px;
         border-radius: 0;
     }
 
     .news-block h3 {
-        font-size: 15px;
+        font-size: 14px;
     }
 
     .news-block p {
