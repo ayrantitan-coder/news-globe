@@ -147,6 +147,19 @@ function showCountryNews(countryName = null) {
   renderNews();
 }
 
+// --- News automatisch aktualisieren, wenn der Globus gedreht wird ---
+let renderNewsTimeout = null;
+
+controls.addEventListener('change', () => {
+    if (filterCountry) return; // Bei ausgewähltem Land nichts überschreiben
+
+    clearTimeout(renderNewsTimeout);
+
+    renderNewsTimeout = setTimeout(() => {
+        renderNews();
+    }, 120);
+});
+
 function renderNews() {
 
   newsContainer.innerHTML = "";
