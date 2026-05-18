@@ -82,7 +82,7 @@ for (let country of countries) {
 
   const sprite = new THREE.Sprite(spriteMaterial.clone());
 
-  sprite.scale.set(0.12, 0.12, 1);
+  sprite.scale.set(0.06, 0.06, 1);
 
   sprite.position.copy(
     latLonToVector3(country.lat, country.lon, 1.02)
@@ -174,9 +174,12 @@ function renderNews() {
 
   for (let c of uniqueCountries) {
 
-    const newsList = newsByCountry[c];
+const newsList = newsByCountry[c];
 
-    if (!newsList) continue;
+if (!newsList) continue;
+
+// --- Zufällige Reihenfolge ---
+const shuffledNews = [...newsList].sort(() => Math.random() - 0.5);
 
     // --- Ländername ---
     const h3 = document.createElement('h3');
@@ -223,7 +226,7 @@ function renderNews() {
 
     for (let i = 0; i < max; i++) {
 
-      const n = newsList[i];
+      const n = shuffledNews[i];
 
       // --- News Box ---
       const article = document.createElement('div');
@@ -321,7 +324,7 @@ function animate() {
 
     m.material.color.set(0xffffff);
 
-    m.scale.set(0.12, 0.12, 1);
+    m.scale.set(0.06, 0.06, 1);
   }
 
   renderer.render(scene, camera);
